@@ -48,35 +48,35 @@ def gen_response_times(alpha, N):
 
 
 def send_batch(alpha, mu, send_func, batch_size=100):
-	response_times = gen_response_times(alpha, batch_size)
-	distances_between_requests = gen_distances(mu, batch_size)
-	for distance, response_time in zip(distances_between_requests, response_times):
-		# sleep for distance milliseconds before the next request
-		time.sleep(distance / 1000)
-		# send response time
-		send_func(response_time)
-		
-
+    response_times = gen_response_times(alpha, batch_size)
+    distances_between_requests = gen_distances(mu, batch_size)
+    for distance, response_time in zip(distances_between_requests, response_times):
+        # sleep for distance milliseconds before the next request
+        time.sleep(distance / 1000)
+        # send response time
+        send_func(response_time)
+        
+ 
 def run_app():
-	args = parser.parse_args()
+    args = parser.parse_args()
 
-	client = statsd.StatsClient(
-		host=args.statsd_host,
-		port=args.statsd_port,
-	)
-	send_func = lambda value: client.incr(args.statsd_metric, value)
+    client = statsd.StatsClient(
+        host=args.statsd_host,
+        port=args.statsd_port,
+    )
+    send_func = lambda value: client.incr(args.statsd_metric, value)
 
-	rps = args.rps
-	assert rps > 0, 'RPS should be > 0'
+    rps = args.rps
+    assert rps > 0, 'RPS should be > 0'
 
-	# Mu and alpha have these formulas - more info in ipynb
-	mu = 1000 / rps
-	alpha = args.response_time_avg
-	assert alpha > 0, 'response_time_avg should be > 0'
+    # Mu and alpha have these formulas - more info in ipynb
+    mu = 1000 / rps
+    alpha = args.response_time_avg
+    assert alpha > 0, 'response_time_avg should be > 0'
 
-	while(True):
-		send_batch(alpha, mu, send_func)
-		
+    while(True):
+        send_batch(alpha, mu, send_func)
+        
 
  
 if __name__ == '__main__':
