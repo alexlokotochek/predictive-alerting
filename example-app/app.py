@@ -9,38 +9,33 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument(
     'rps',
-    metavar='rps',
     default=100,
     type=int,
-    nargs='+',
+    nargs='?',
 )
 parser.add_argument(
-    'response-time-avg',
-    metavar='response_time_avg',
+    'response_time_avg',
     default=100,
     type=int,
-    nargs='+',
+    nargs='?',
 )
 parser.add_argument(
-    'statsd-host',
-    metavar='statsd_host',
+    'statsd_host',
     default='localhost',
     type=str,
-    nargs='+',
+    nargs='?',
 )
 parser.add_argument(
-    'statsd-port',
-    metavar='statsd_port',
+    'statsd_port',
     default=8125,
     type=int,
-    nargs='+',
+    nargs='?',
 )
 parser.add_argument(
-    'statsd-metric',
-    metavar='statsd_metric',
+    'statsd_metric',
     default='example_app.test.metric',
     type=str,
-    nargs='+',
+    nargs='?',
 )
 
 
@@ -52,30 +47,33 @@ def gen_response_times(alpha, N):
     return gamma.rvs(a=alpha, size=N)
 
 
-def send_batch(alpha, mu, client, batch_size=100):
+def send_batch(alpha, mu, send_func, batch_size=100):
 	response_times = gen_response_times(alpha, batch_size)
 	distances_between_requests = gen_distances(mu, batch_size)
 	for distance, response_time in zip(distances_between_requests, response_times):
 		# sleep for distance milliseconds before the next request
 		time.sleep(distance / 1000)
 		# send response time
-		client.incr(args.statsd_metric, response_time)
+		send_func(response_time)
+		
 
-
-def run_app(rps, response_time_avg):
+def run_app():
 	args = parser.parse_args()
 
 	client = statsd.StatsClient(
 		host=args.statsd_host,
 		port=args.statsd_port,
 	)
+	send_func = lambda value: client.incr(args.statsd_metric, value)
 
+	rps = args.rps
 	assert rps > 0, 'RPS should be > 0'
 	mu = 1000 / rps
-	alpha = response_time_avg
+	alpha = args.response_time_avg
+	assert alpha > 0, 'response_time_avg should be > 0'
 
 	while(True):
-		send_batch(alpha, mu, client)
+		send_batch(alpha, mu, send_func)
 		
 
  
