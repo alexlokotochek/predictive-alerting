@@ -68,6 +68,8 @@ def run_app():
 
 	rps = args.rps
 	assert rps > 0, 'RPS should be > 0'
+
+	# Mu and alpha have these formulas - more info in ipynb
 	mu = 1000 / rps
 	alpha = args.response_time_avg
 	assert alpha > 0, 'response_time_avg should be > 0'
