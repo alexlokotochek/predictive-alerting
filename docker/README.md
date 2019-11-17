@@ -20,6 +20,7 @@
 Все, теперь можно начать отправлять метрики:
 1) Через graphite(через сокеты):
   - echo "<metric.name.to.send> <metic-value-to-send> `date +%s`" | nc <hostname> 2003
+  - Название метрики будет совпадать с <metric.name.to.send>
 2) Через statsd
   - Через сокеты: echo "new.metric.for.test:123|c" | nc -u <hostname> 8125
   - Через питоновский клиент: 
@@ -28,3 +29,4 @@
  
       client = statsd.StatsClient(host='localhost', port=8125)
       client.incr('new.metric.for.test', 123)
+  - Название метрики в графане будет таким: stats.<metric.name.to.send> или stats_counts.<metric.name.to.send> (по префиксу stats_counts -- без аггрегации)
