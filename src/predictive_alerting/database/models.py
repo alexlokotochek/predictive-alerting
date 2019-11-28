@@ -42,7 +42,7 @@ class Metric(db.Model):
     predicted_analysis_period_s = Column(Float, default=600.)
     # Lower bound for error to trigger an alert.
     # For prophet, it would be uncertainty interval.
-    predicted_error_alert_threshold = Column(Float, default=0.8)
+    predicted_error_alert_level = Column(Float, default=0.8)
 
     created_date = Column(DateTime, default=datetime.datetime.utcnow)
     last_predicted_date = Column(DateTime, default=datetime.datetime.utcnow)
