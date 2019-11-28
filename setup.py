@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='predictive-alerting',
-    version='0.0.5',
+    version='0.0.6',
     description='cian ml etl',
     author='323',
     author_email='323@323.ru',
