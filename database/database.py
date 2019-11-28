@@ -4,6 +4,10 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+
+
 SQLALCHEMY_DATABASE_URL = (
 	f'mysql://{os.environ["mysql_user"]}:'
 	f'{os.environ["mysql_password"]}@'
@@ -11,9 +15,7 @@ SQLALCHEMY_DATABASE_URL = (
 	f'{os.environ["mysql_db"]}'
 )
 
-engine = create_engine(
-    SQLALCHEMY_DATABASE_URL,
-)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URL
 
-Base = declarative_base()
+db = SQLAlchemy(app)

@@ -3,27 +3,27 @@ from sqlalchemy import (
     Boolean, Column, ForeignKey, Integer, String, Float, DateTime,
 )
 from sqlalchemy.orm import relationship
-from database import Base
+from database import db
 
 
-class AlertType(Base):
+class AlertType(db.Model):
     """Table with types of alerts. Used by alert_sender service
     to identify what to do in case if alert is triggered.
     """
-    __tablename__ = "alerts_types"
+    __tablename__ = "alert_types"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, index=True)
-    description = Column(String)
+    name = Column(String(255), index=True)
+    description = Column(String(255))
     error_value = Column(Float)
     created_date = Column(DateTime, default=datetime.datetime.utcnow)
 
     # Action to perform if alert of that type is triggered.
-    action = Column(String)  # send_message
-    destination = Column(String)  # url to call or slack channel
+    action = Column(String(255))  # send_message
+    destination = Column(String(255))  # url to call or slack channel
 
 
-class Metric(Base):
+class Metric(db.Model):
     """Table with metrics. Used by task_runner service to
     identify which tasks should be run and what alert type 
     should be triggered in case if error reached 
@@ -32,7 +32,7 @@ class Metric(Base):
     __tablename__ = "metrics"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, unique=True, index=True)
+    name = Column(String(255), unique=True, index=True)
     is_active = Column(Boolean, default=True)
     alert_type_id = Column(Integer, ForeignKey("alert_types.id"))
 
@@ -47,7 +47,7 @@ class Metric(Base):
     last_predicted_date = Column(DateTime, default=datetime.datetime.utcnow)
 
 
-class Alert(Base):
+class Alert(db.Model):
     """Table with alerts. Alert is created by a task_runner service.
     Alert_sender service aquires lock on that table, grabs alerts, 
     deletes them, releases the table and sends according to 
@@ -58,6 +58,6 @@ class Alert(Base):
     id = Column(Integer, primary_key=True, index=True)
     metric_id = Column(Integer, ForeignKey("metrics.id"))
 
-    description = Column(String)
+    description = Column(String(255))
     error_value = Column(Float)
     created_date = Column(DateTime, default=datetime.datetime.utcnow)
