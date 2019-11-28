@@ -30,3 +30,5 @@
       client = statsd.StatsClient(host='localhost', port=8125)
       client.incr('new.metric.for.test', 123)
   - Название метрики в графане будет таким: stats.<metric.name.to.send> или stats_counts.<metric.name.to.send> (по префиксу stats_counts -- без аггрегации)
+
+![Dashboard](https://github.com/alexlokotochek/predictive-alerting/blob/master/integrations/grafana/example.png)

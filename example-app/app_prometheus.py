@@ -2,8 +2,7 @@ import time
 
 import argparse
 from scipy.stats import poisson, gamma
-import statsd
-
+from prometheus_client import Summary, start_http_server
 
 parser = argparse.ArgumentParser()
 
@@ -20,20 +19,14 @@ parser.add_argument(
     nargs='?',
 )
 parser.add_argument(
-    'statsd_host',
-    default='localhost',
-    type=str,
-    nargs='?',
-)
-parser.add_argument(
-    'statsd_port',
-    default=8125,
+    'prometheus_port',
+    default=8000,
     type=int,
     nargs='?',
 )
 parser.add_argument(
-    'statsd_metric',
-    default='example_app.test.metric',
+    'prometheus_metric',
+    default='example_app_test_metric',
     type=str,
     nargs='?',
 )
@@ -55,16 +48,15 @@ def send_batch(alpha, mu, send_func, batch_size=100):
         time.sleep(distance / 1000)
         # send response time
         send_func(response_time)
-        
- 
+
+
 def run_app():
     args = parser.parse_args()
 
-    client = statsd.StatsClient(
-        host=args.statsd_host,
-        port=args.statsd_port,
-    )
-    send_func = lambda value: client.incr(args.statsd_metric, value)
+    start_http_server(args.prometheus_port)
+
+    summary = Summary(args.prometheus_metric, '')
+    send_func = lambda value: summary.observe(value)
 
     rps = args.rps
     assert rps > 0, 'RPS should be > 0'
