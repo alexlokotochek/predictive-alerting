@@ -40,8 +40,9 @@ class Metric(db.Model):
     prediction_freq_s = Column(Float, default=60.)
     # What period of metric time series should be analyzed
     predicted_analysis_period_s = Column(Float, default=600.)
-    # Lower bound for error to trigger an alert
-    predicted_error_alert_threshold = Column(Float, default=0.1)
+    # Lower bound for error to trigger an alert.
+    # For prophet, it would be uncertainty interval.
+    predicted_error_alert_threshold = Column(Float, default=0.8)
 
     created_date = Column(DateTime, default=datetime.datetime.utcnow)
     last_predicted_date = Column(DateTime, default=datetime.datetime.utcnow)
