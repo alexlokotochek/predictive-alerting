@@ -1,0 +1,3 @@
+fbprophet>=0.5
+pystan
+requests

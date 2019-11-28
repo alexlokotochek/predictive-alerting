@@ -14,5 +14,6 @@ setup(
     install_requires=[
         'fbprophet>=0.5',
         'pystan',
+        'requests',
     ],
 )
