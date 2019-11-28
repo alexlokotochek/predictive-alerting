@@ -12,14 +12,6 @@
 
 2.4 ```GRANT ALL ON predictive_alerting.* TO 'banana'@'localhost';```
 
-2.5 ```mysql_user=banana mysql_password=banana mysql_host=localhost mysql_db=predictive_alerting python3```
-
-# 3. Initialize tables from models.
-
-```
-from database import Base, engine
-
-Base.metadata.create_all(bind=engine)
-```
+2.5 ```mysql_user=banana mysql_password=banana mysql_host=localhost mysql_db=predictive_alerting python3 init_db.py```
 
 All tables from models should be created now, congrats!
