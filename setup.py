@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='predictive-alerting',
-    version='0.0.6',
+    version='0.0.7',
     description='metric future predictor',
     author='323',
     author_email='323@323.ru',
