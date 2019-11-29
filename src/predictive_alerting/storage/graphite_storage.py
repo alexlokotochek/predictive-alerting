@@ -10,14 +10,14 @@ class GraphiteStorage(Storage):
             *,
             graphite_host: str,
             graphite_port: str,
-            metric_names: List[str],
+            metric_name: str,
             from_: Optional[str] = None,
             until_: Optional[str] = None,
             format_: str = 'json',
     ) -> str:
         # TODO: ADD maxDataPoints, noNullPoints
 
-        targets = '&target='.join(metric_names)
+        target = '&target=' + metric_name
         graphite_render_url = (
             f'http://{graphite_host}:{graphite_port}'
             f'/render/?target={targets}&format={format_}'

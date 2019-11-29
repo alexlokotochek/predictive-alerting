@@ -21,7 +21,7 @@ class GraphiteStorage(Storage):
             graphite_port: str,
             metric_names: List[str],
             from_: Optional[str] = None,
-            until_: Optional[str] = None,
+            until_: Optional[int] = None,
             format_: str = 'json',
     ) -> str:
         # TODO: ADD maxDataPoints, noNullPoints
@@ -44,7 +44,7 @@ class GraphiteStorage(Storage):
             *,
             metric_name: str,
             from_timestamp: Optional[int] = None,
-            until_: Optional[str] = None,
+            until_: Optional[int] = None,
             format_: str = 'json',
     ) -> Dict[str, Any]:
         graphite_host = self.connection_params['GRAPHITE_HOST']

@@ -2,57 +2,53 @@ from storage import Storage
 from typing import Any, Dict, List, Optional
 
 import requests
+import datetime
 
 
-class GraphiteStorage(Storage):
-    def _generate_graphite_render_url(
+class PrometheusStorage(Storage):
+    def _generate_prometheus_url(
             self,
             *,
-            graphite_host: str,
-            graphite_port: str,
-            metric_names: List[str],
-            from_: Optional[str] = None,
-            until_: Optional[str] = None,
-            format_: str = 'json',
+            prometheus_host: str,
+            prometheus_port: str,
+            metric_name: str,
+            from_timestamp: int = None,
+            until_: Optional[int] = None,
+            step: Optional[int] = 5,
     ) -> str:
-        # TODO: ADD maxDataPoints, noNullPoints
-
-        targets = '&target='.join(metric_names)
-        graphite_render_url = (
-            f'http://{graphite_host}:{graphite_port}'
-            f'/render/?target={targets}&format={format_}'
+        end = datetime.datetime.now().timestamp()
+        prometheus_render_url = (
+            f'http://{prometheus_host}:{prometheus_port}/api/v1/query_range'
+            f'?query=rate({metric_name}_sum[1m])/rate({metric_name}_count[1m])'
+            '&start={from_timestamp}&end={end}&step={step}'
         )
-
-        if from_ is not None:
-            graphite_render_url += f'&from={from_}'
-        if until_ is not None:
-            graphite_render_url += f'&until={until_}'
-
-        return graphite_render_url
+        return prometheus_render_url
 
     def read_metric(
             self,
             *,
             metric_name: str,
             from_timestamp: Optional[int] = None,
-            until_: Optional[str] = None,
-            format_: str = 'json',
+            until_: Optional[int] = None,
+            format_: str = None,
     ) -> Dict[str, Any]:
-        graphite_host = self.connection_params['GRAPHITE_HOST']
-        graphite_port = self.connection_params['GRAPHITE_PORT']
+        prometheus_host = self.connection_params['PROMETHEUS_HOST']
+        prometheus_port = self.connection_params['PROMETHEUS_PORT']
 
-        graphite_render_url = self._generate_graphite_render_url(
-            graphite_host=graphite_host,
-            graphite_port=graphite_port,
+        prometheus_render_url = self._generate_prometheus_url(
+            prometheus_host=prometheus_host,
+            prometheus_port=prometheus_port,
             metric_name=metric_name,
-            from_=from_timestamp.strftime(('%H:%M_%Y%m%d')),
+            from_timestamp=from_timestamp,
             until_=until_,
-            format_=format_
         )
 
         metric_response = requests.get(
-            url=graphite_render_url
+            url=prometheus_render_url
         )
-        metric = metric_response.json()
+        values = [
+            (float(v[1]), v[0]) 
+            for v in response['data']['result'][0]['values']
+        ]
 
-        return metric[0]['datapoints']
+        return values
