@@ -54,7 +54,7 @@ class TaskRunner:
         df_test['yhat_upper'] = future_predictions['yhat_upper']
 
         bad_points = []
-        for ds, y, yhat_lower, yhat, yhat_upper in df_tez.values:
+        for ds, y, yhat_lower, yhat, yhat_upper in df_test.values:
             if not (yhat_lower <= y <= yhat_upper):
                 bad_points.append((
                     ds,
