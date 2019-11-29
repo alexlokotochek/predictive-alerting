@@ -8,7 +8,7 @@ from predictive_alerting.storage import Storage
 
 
 class TaskRunner:
-    def __init__(self, storage: Storage, predictor):
+    def __init__(self, storage: Storage, predictor: Prophet):
         self.storage = storage
         self.predictor = predictor
 
@@ -20,7 +20,7 @@ class TaskRunner:
             minutes=minutes_to_get_metrics,
         )
 
-        metric_values = self.storage.read_metrics(
+        metric_values = self.storage.read_metric(
             metric_name=metric_name,
             from_timestamp=from_timestamp,
         )
@@ -36,7 +36,7 @@ class TaskRunner:
         metrics_as_pddf['ds'] = pd.to_datetime(metrics_as_pddf['ds'])
 
         train_test_ts_bound = from_timestamp
-        train_test_bs_bound += datetime.timedelta(
+        train_test_ts_bound += datetime.timedelta(
             minutes=int(minutes_to_get_metrics * 0.9),
         )
 
