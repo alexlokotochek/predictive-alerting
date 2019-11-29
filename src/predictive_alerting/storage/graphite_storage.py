@@ -1,4 +1,4 @@
-from storage import Storage
+from predictive_alerting.storage import Storage
 from typing import Any, Dict, List, Optional
 
 import requests
