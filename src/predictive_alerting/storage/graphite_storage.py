@@ -1,16 +1,7 @@
+from storage import Storage
 from typing import Any, Dict, List, Optional
 
 import requests
-
-
-class Storage:
-    def __init__(self, *, connection_params: Dict[str, Any]):
-        self.connection_params = connection_params
-
-    def read_metric(
-        self, *, metric_name: List[str],
-    ) -> Dict[str, Any]:
-        raise NotImplementedError()
 
 
 class GraphiteStorage(Storage):
@@ -19,14 +10,14 @@ class GraphiteStorage(Storage):
             *,
             graphite_host: str,
             graphite_port: str,
-            metric_names: List[str],
+            metric_name: str,
             from_: Optional[str] = None,
-            until_: Optional[int] = None,
+            until_: Optional[str] = None,
             format_: str = 'json',
     ) -> str:
         # TODO: ADD maxDataPoints, noNullPoints
 
-        targets = '&target='.join(metric_names)
+        target = '&target=' + metric_name
         graphite_render_url = (
             f'http://{graphite_host}:{graphite_port}'
             f'/render/?target={targets}&format={format_}'
@@ -44,7 +35,7 @@ class GraphiteStorage(Storage):
             *,
             metric_name: str,
             from_timestamp: Optional[int] = None,
-            until_: Optional[int] = None,
+            until_: Optional[str] = None,
             format_: str = 'json',
     ) -> Dict[str, Any]:
         graphite_host = self.connection_params['GRAPHITE_HOST']
