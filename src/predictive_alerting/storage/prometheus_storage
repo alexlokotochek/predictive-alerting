@@ -1,16 +1,7 @@
+from storage import Storage
 from typing import Any, Dict, List, Optional
 
 import requests
-
-
-class Storage:
-    def __init__(self, *, connection_params: Dict[str, Any]):
-        self.connection_params = connection_params
-
-    def read_metric(
-        self, *, metric_name: List[str],
-    ) -> Dict[str, Any]:
-        raise NotImplementedError()
 
 
 class GraphiteStorage(Storage):
